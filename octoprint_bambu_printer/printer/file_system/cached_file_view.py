@@ -27,6 +27,8 @@ class CachedFileView:
     def with_filter(
         self, folder: str, extensions: str | list[str] | None = None
     ) -> "CachedFileView":
+        if isinstance(extensions, list):
+            extensions = tuple(extensions)
         self.folder_view[(folder, extensions)] = None
         return self
 

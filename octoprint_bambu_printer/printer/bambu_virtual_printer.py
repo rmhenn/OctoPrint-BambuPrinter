@@ -100,8 +100,8 @@ class BambuVirtualPrinter:
         self._selected_project_file: FileInfo | None = None
         self._project_files_view = (
             CachedFileView(self.file_system, on_update=self._list_cached_project_files)
-            .with_filter("", ".3mf")
-            .with_filter("cache/", ".3mf")
+            .with_filter("", [".3mf", ".gcode"])
+            .with_filter("cache/", [".3mf", ".gcode"])
         )
 
         self._serial_io.start()

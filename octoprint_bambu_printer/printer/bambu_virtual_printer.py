@@ -98,11 +98,21 @@ class BambuVirtualPrinter:
 
         self.file_system = RemoteSDCardFileList(settings)
         self._selected_project_file: FileInfo | None = None
-        self._project_files_view = (
-            CachedFileView(self.file_system, on_update=self._list_cached_project_files)
-            .with_filter("", [".3mf", ".gcode"])
-            .with_filter("cache/", [".3mf", ".gcode"])
-        )
+
+        # Due to A1s not being able to print gcode files via MQTT, hide any gcode files when an A1/A1M is connected
+        if self._settings.get(["device_type"]) in ["A1", "A1MINI"]:
+            self._project_files_view = (
+                CachedFileView(self.file_system, on_update=self._list_cached_project_files)
+                .with_filter("", [".3mf"])
+                .with_filter("cache/", [".3mf"])
+            )
+        else:
+            self._project_files_view = (
+                CachedFileView(self.file_system, on_update=self._list_cached_project_files)
+                .with_filter("", [".3mf", ".gcode"])
+                .with_filter("cache/", [".3mf", ".gcode"])
+            )
+
 
         self._serial_io.start()
         self._printer_thread.start()

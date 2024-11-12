@@ -28,29 +28,40 @@ class IdleState(APrinterState):
             else "file:///sdcard/"
         )
 
-        print_command = {
-            "print": {
-                "sequence_id": 0,
-                "command": "project_file",
-                "param": "Metadata/plate_1.gcode",
-                "md5": "",
-                "profile_id": "0",
-                "project_id": "0",
-                "subtask_id": "0",
-                "task_id": "0",
-                "subtask_name": selected_file.file_name,
-                "url": f"{filesystem_root}{selected_file.path.as_posix()}",
-                "bed_type": "auto",
-                "timelapse": self._printer._settings.get_boolean(["timelapse"]),
-                "bed_leveling": self._printer._settings.get_boolean(["bed_leveling"]),
-                "flow_cali": self._printer._settings.get_boolean(["flow_cali"]),
-                "vibration_cali": self._printer._settings.get_boolean(
-                    ["vibration_cali"]
-                ),
-                "layer_inspect": self._printer._settings.get_boolean(["layer_inspect"]),
-                "use_ams": self._printer._settings.get_boolean(["use_ams"]),
-                "ams_mapping": self._printer._settings.get(["ams_mapping"]),
+        # Construct print command based on file type
+        file_extension = selected_file.file_name.rsplit('.', 1)[-1]
+        if 'gcode' in file_extension:
+            print_command = {
+                "print": {
+                    "sequence_id": 0,
+                    "command": "gcode_file",
+                    "param": f"{filesystem_root}{selected_file.path.as_posix()}"
+                }
             }
-        }
+        else:
+            print_command = {
+                "print": {
+                    "sequence_id": 0,
+                    "command": "project_file",
+                    "param": "Metadata/plate_1.gcode",
+                    "md5": "",
+                    "profile_id": "0",
+                    "project_id": "0",
+                    "subtask_id": "0",
+                    "task_id": "0",
+                    "subtask_name": selected_file.file_name,
+                    "url": f"{filesystem_root}{selected_file.path.as_posix()}",
+                    "bed_type": "auto",
+                    "timelapse": self._printer._settings.get_boolean(["timelapse"]),
+                    "bed_leveling": self._printer._settings.get_boolean(["bed_leveling"]),
+                    "flow_cali": self._printer._settings.get_boolean(["flow_cali"]),
+                    "vibration_cali": self._printer._settings.get_boolean(
+                        ["vibration_cali"]
+                    ),
+                    "layer_inspect": self._printer._settings.get_boolean(["layer_inspect"]),
+                    "use_ams": self._printer._settings.get_boolean(["use_ams"]),
+                    "ams_mapping": self._printer._settings.get(["ams_mapping"]),
+                }
+            }
 
         return print_command
